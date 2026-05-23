@@ -1,5 +1,7 @@
 # RISC-V (RV32I) Emulator
 
+Warning: Still under development! Wouldn't expect this to be finished anytime soon. It's just a hobby project lol.
+
 This is a software emulator for the 32-bit integer instruction set of the [RISC-V](https://riscv.org/) architecture written in Rust. It reads a compiled binary in RISC-V instruction format, loads it into simulated memory, and runs a fetch-decode-execute loop.
 
 ## Core-components
