@@ -1,6 +1,6 @@
 # RISC-V (RV32I) Emulator
 
-Warning: Still under development! Wouldn't expect this to be finished anytime soon. It's just a hobby project lol.
+**WARNING: STILL UNDER DEVELOPMENT! WOULDN'T EXPECT THIS TO BE FINISHED ANYTIME SOON. IT'S JUST A HOBBY PROJECT LOL.**
 
 This is a software emulator for the 32-bit integer instruction set of the [RISC-V](https://riscv.org/) architecture written in Rust. It reads a compiled binary in RISC-V instruction format, loads it into simulated memory, and runs a fetch-decode-execute loop.
 
@@ -81,9 +81,26 @@ In accordance with RISC-V RV32I ABI conventions, the 32 general-purpose register
 ## Assembly Syntax
 
 ### Instruction Syntax
-- **R-Type**: `OP RD, RS1, RS2` (e.g., `ADD x5, x1, x2`)
-- **I-Type**: `OP RD, RS1, IMM` (e.g., `ADDI x5, x1, 10`)
-- **S-Type**: `OP RS2, IMM(RS1)` (e.g., `SW x5, 0(x1)`)
-- **U-Type**: `OP RD, IMM` (e.g., `LUI x5, 0x12345`)
-- **B-Type**: `OP RS1, RS2, IMM` (e.g., `BEQ x1, x2, 16`)
-- **J-Type**: `OP RD, IMM` (e.g., `JAL x1, 32`)
+#### R-Type: 
+OP RD, RS1, RS2
+- `ADD x5, x1, x2`
+
+#### I-Type: 
+OP RD, RS1, IMM
+- `ADDI x5, x1, 10`
+
+#### S-Type: 
+OP RS2, IMM(RS1)
+- `SW x5, 0(x1)`
+
+#### U-Type: 
+OP RD, IMM
+- `LUI x5, 0x12345`
+
+#### B-Type: 
+OP RS1, RS2, IMM
+- `BEQ x1, x2, 16`
+
+#### J-Type: 
+OP RD, IMM
+- `JAL x1, 32`
