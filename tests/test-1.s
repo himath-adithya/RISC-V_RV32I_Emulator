@@ -5,7 +5,7 @@ _start:
   addi x2, x0, 0
 loop:
   add x2, x2, x1
-  addi x1, x0, -1
+  addi x1, x1, -1
   bne x1, x0, loop
 halt:
-  jal x0, halt
+  jal x0, halt # infinite loop to halt the program
