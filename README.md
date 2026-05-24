@@ -9,11 +9,11 @@ This is a software emulator for the 32-bit integer instruction set of the [RISC-
 The following components will be implemented in the emulator:
 
 ### Memory Model: 
-For memory a simulated byte array using Vec<u8> (Dynamic Memory Allocation) will be used
+For memory a simulated byte array using Vec<u32> (Dynamic Memory Allocation) will be used
 ### CPU State: 
-A struct holding 32 general-purpose registers ([u32; 32]), a program counter (PC), and memory references
+A struct holding 32 general-purpose registers ([u32; 32]), a program counter (PC)
 ### Execution Loop: 
-Reading 32-bit instructions, extracting opcodes and operands via bitwise masking, and executing the corresponding logic.
+A loop that fetches instructions from memory, decodes them, and executes them by modifying the CPU state accordingly.
 
 **Note**: This emulator will not include pipeling, caching, or other performance optimizations. It will focus on correctness and simplicity.
 
@@ -21,12 +21,12 @@ Reading 32-bit instructions, extracting opcodes and operands via bitwise masking
 
 ### Core Fields
 
-- **OPCODE (00-06)** : instruction type
-- **RD     (07-11)** : destination register
-- **FUNCT3 (12-14)** : 3bit function modifier
-- **RS1    (15-19)** : source register 1
-- **RS2    (20-24)** : source register 2
-- **FUNCT7 (25-31)** : 7bit function modifier
+- **OPCODE (00-06) [07]** : instruction type
+- **RD     (07-11) [05]** : destination register
+- **FUNCT3 (12-14) [03]** : 3bit function modifier
+- **RS1    (15-19) [05]** : source register 1
+- **RS2    (20-24) [05]** : source register 2
+- **FUNCT7 (25-31) [07]** : 7bit function modifier
 
 ### Instruction Fetching & Formating
 
@@ -81,26 +81,62 @@ In accordance with RISC-V RV32I ABI conventions, the 32 general-purpose register
 ## Assembly Syntax
 
 ### Instruction Syntax
+R32I contains exactly 40 instructions.
+
 #### R-Type: 
 OP RD, RS1, RS2
-- `ADD x5, x1, x2`
+- ADD  - Add 
+- SUB  - Subtract	
+- SLL	 - Shift Left Logical
+- SLT	 - Set Less Than (signed)
+- SLTU - Set Less Than (unsigned)
+- XOR  - Exclusive OR 	
+- SRL  - Shift Right Logical	
+- SRA	 - Shift Right Arithmetic
+- OR   - Inclusive OR 
+- AND  - Logical AND	
 
 #### I-Type: 
 OP RD, RS1, IMM
-- `ADDI x5, x1, 10`
+- ADDI	
+- SLTI   - Set Less Than Immediate (signed)	
+- SLTIU  - Set Less Than Immediate (unsigned)
+- XORI	
+- ORI
+- ANDI	
+- SLLI   - Shift Left Logical Immediate
+- SRLI   - Shift Right Logical Immediate
+- SRAI   - Shift Right Arithmetic Immediate
+- JALR   - Jump and Link Register
+- LB     - Load Byte
+- LH     - Load Halfword
+- LW     - Load Word
+- LBU    - Load Byte Unsigned
+- LHU    - Load Halfword Unsigned
+- FENCE  - Memory Ordering Fence
+- ECALL  - Environment Call
+- EBREAK - Environment Breakpoint
 
 #### S-Type: 
 OP RS2, IMM(RS1)
-- `SW x5, 0(x1)`
+- SB - Store Byte
+- SH - Store Halfword
+- SW - Store Word
 
 #### U-Type: 
 OP RD, IMM
-- `LUI x5, 0x12345`
+- LUI   - Load Upper Immediate
+- AUIPC - Add Upper Immediate to PC
 
 #### B-Type: 
 OP RS1, RS2, IMM
-- `BEQ x1, x2, 16`
+- BEQ  - Branch if Equal
+- BNE  - Branch if Not Equal
+- BLT  - Branch if Less Than (signed)
+- BGE  - Branch if Greater or Equal (signed)
+- BLTU - Branch if Less Than (unsigned)
+- BGEU - Branch if Greater or Equal (unsigned)
 
 #### J-Type: 
 OP RD, IMM
-- `JAL x1, 32`
+- JAL - Jump and Link
