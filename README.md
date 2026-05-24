@@ -74,7 +74,8 @@ In accordance with RISC-V RV32I ABI conventions, the 32 general-purpose register
 - **x5-7**   : t0-t2 (temporary registers)
 - **x8**     : s0/fp (frame pointer)
 - **x9**     : s1 (saved register 1)
-- **x10-17** : a0-a7 (argument registers)
+- **x10-11** : a0-a1 (argument registers/ return values)
+- **x12-17** : a2-a7 (argument registers)
 - **x18-27** : s2-s11 (saved registers)
 - **x28-31** : t3-t6 (temporary registers)
 
