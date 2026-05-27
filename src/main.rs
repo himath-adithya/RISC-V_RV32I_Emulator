@@ -6,26 +6,35 @@
 //     0x93005000, 0x13010000, 0x33011100, 0x9380f0ff, 0xe39c00fe, 0x6f000000,
 // ];
 
+mod instruction;
 mod cpu;
-mod functions;
+mod kernel;
+mod memory;
+mod consts;
+
+use std::env::args;
+
+use crate::{cpu::CPU, kernel::Kernel, memory::Memory};
 
 fn main() {
-    // load the binary file into a byte vector
-    let prg: String = std::env::args().nth(0).expect("Program name not found"); // Get the program name for usage message
-    let arg: String = std::env::args()
+  // get the binary file name from the command line arguments
+  let arg: String = args()
         .nth(1)
-        .expect(&format!("Usage: {prg} <binary_file>")); // Get the binary file name from the command line arguments
+        .expect(&format!("Usage: {} <binary_file>", args().nth(0).unwrap_or("<program_name>".into())));
 
-    let mut cpu = crate::cpu::Cpu {
-        pc: 0,
-        regs: [0; 32],
-        mem: Vec::new(),
-        running: false,
-    };
+  // initialization and loading program into memory (in a real system kernel also sets the pc)
+  let kernel = Kernel::new();
+  let mut cpu = CPU::new();
+  let mem = Memory {
+      bytes: kernel.load_memory(&arg)
+  };
 
-    cpu.mem = crate::functions::load_memory(&arg);
-    cpu.mem = std::fs::read(arg).expect("Failed to read the binary file");
-
-    // a method should be implemented to execute the instructions in the vector
-    // for now, we will just print the instructions
+  // run the program
+  cpu.set_running(true);
+  while cpu.is_running() {
+      let instruction = cpu.fetch(&mem);
+      cpu.inc_pc(); // pc is incremented after fetching
+      let instruction = cpu.decode(&instruction); // w rust for allowing variable redeclaration
+      instruction.execute(&mut cpu, &mem);
+  }
 }
