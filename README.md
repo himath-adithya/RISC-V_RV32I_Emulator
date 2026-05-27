@@ -36,29 +36,94 @@ A loop that fetches instructions from memory, decodes them, and executes them by
 
 - The following layout bits are depicted from MSB -> LSB (i.e., bit 31 is the most significant bit and bit 0 is the least significant bit):
 
+<table>
+  <tr>
+    <th>Type</th>
+    <th>31 - 25</th>
+    <th>24 - 20</th>
+    <th>19 - 15</th>
+    <th>14 - 12</th>
+    <th>11 - 07</th>
+    <th>06 - 00</th>
+  </tr>
+</table>
+
 #### 1. R-Type (Register-Register)
 - Used in arithemtic and logical operations: ADD, SUB, AND, OR, SLL
-- **LAYOUT**: `| FUNCT7 _____ | RS2 | RS1 | FUNCT3 | RD ________ | OPCODE |`
+<table>
+  <tr>
+    <td>R-Type</td>
+    <td>FUNCT7</td>
+    <td>RS2</td>
+    <td>RS1</td>
+    <td>FUNCT3</td>
+    <td>RD</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 #### 2. I-Type (Register-Immediate)
 - Used for immediate arithmetic and logical operations: ADDI, LW, JALR
-- **LAYOUT**: `| IMM[11:0] ________ | RS1 | FUNCT3 | RD ________ | OPCODE |`
+<table>
+  <tr>
+    <td>I-Type</td>
+    <td colspan="2">IMM[11:0]</td>
+    <td>RS1</td>
+    <td>FUNCT3</td>
+    <td>RD</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 #### 3. S-Type (Store)
 - Used for storing data from register to memory: SW, SH, SB
-- **LAYOUT**: `| IMM[11:5] __ | RS2 | RS1 | FUNCT3 | IMM[4:0] __ | OPCODE |`
+<table>
+  <tr>
+    <td>S-Type</td>
+    <td>IMM[11:5]</td>
+    <td>RS2</td>
+    <td>RS1</td>
+    <td>FUNCT3</td>
+    <td>IMM[4:0]</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 #### 4. U-Type (Upper-Immediate)
 - Used for loading 20-bit immediate values into the upper bits of a register: LUI, AUIPC
-- **LAYOUT**: `| IMM[31:12] ______________________ | RD ________ | OPCODE |`
+<table>
+  <tr>
+    <td>U-Type</td>
+    <td colspan="4">IMM[31:12]</td>
+    <td>RD</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 #### 5. B-Type (Branch)
 - Used for conditional branching: BEQ, BNE, BLT, BGE
-- **LAYOUT**: `| IMM[12|10:5] | RS2 | RS1 | FUNCT3 | IMM[4:1|11] | OPCODE |`
+<table>
+  <tr>
+    <td>B-Type</td>
+    <td>IMM[12 | 10:5]</td>
+    <td>RS2</td>
+    <td>RS1</td>
+    <td>FUNCT3</td>
+    <td>IMM[4:1 | 11]</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 #### 6. J-Type (Jump)
 - Used for unconditional jumps: JAL
-- **LAYOUT**: `| IMM[20|10:1|11|19:12] ___________ | RD ________ | OPCODE |`
+<table>
+  <tr>
+    <td>J-Type</td>
+    <td colspan="4">IMM[20 | 10:1 | 11 | 19:12]</td>
+    <td>RD</td>
+    <td>OPCODE</td>
+  </tr>
+</table>
 
 ## Register Conventions
 
@@ -99,12 +164,12 @@ OP RD, RS1, RS2
 
 #### I-Type: 
 OP RD, RS1, IMM
-- ADDI	
+- ADDI	 - Add Immediate
 - SLTI   - Set Less Than Immediate (signed)	
 - SLTIU  - Set Less Than Immediate (unsigned)
-- XORI	
-- ORI
-- ANDI	
+- XORI	 - XOR Immediate
+- ORI	   - OR Immediate
+- ANDI	 - AND Immediate
 - SLLI   - Shift Left Logical Immediate
 - SRLI   - Shift Right Logical Immediate
 - SRAI   - Shift Right Arithmetic Immediate
