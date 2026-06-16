@@ -3,5 +3,6 @@ name = "RV32I_Emulator"
 version = "1.0.0"
 description = "A basic RISC-V (RV321) emulator project."
 license = "MIT"
+edition = "2021"
 
 [dependencies]

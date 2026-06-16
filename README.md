@@ -153,35 +153,35 @@ R32I contains exactly 40 instructions.
 OP RD, RS1, RS2
 - ADD  - Add 
 - SUB  - Subtract	
-- SLL	 - Shift Left Logical
-- SLT	 - Set Less Than (signed)
-- SLTU - Set Less Than (unsigned)
 - XOR  - Exclusive OR 	
-- SRL  - Shift Right Logical	
-- SRA	 - Shift Right Arithmetic
 - OR   - Inclusive OR 
 - AND  - Logical AND	
+- SLL	 - Shift Left Logical
+- SRL  - Shift Right Logical	
+- SRA	 - Shift Right Arithmetic
+- SLT	 - Set Less Than (signed)
+- SLTU - Set Less Than (unsigned)
 
 #### I-Type: 
 OP RD, RS1, IMM
-- ADDI	 - Add Immediate
-- SLTI   - Set Less Than Immediate (signed)	
-- SLTIU  - Set Less Than Immediate (unsigned)
+- ADDI	 - Add Immediate (NOTE: NOP => ADDI rd, rs1, 0)
 - XORI	 - XOR Immediate
 - ORI	   - OR Immediate
 - ANDI	 - AND Immediate
 - SLLI   - Shift Left Logical Immediate
 - SRLI   - Shift Right Logical Immediate
 - SRAI   - Shift Right Arithmetic Immediate
-- JALR   - Jump and Link Register
+- SLTI   - Set Less Than Immediate (signed)	
+- SLTIU  - Set Less Than Immediate (unsigned)
 - LB     - Load Byte
 - LH     - Load Halfword
 - LW     - Load Word
 - LBU    - Load Byte Unsigned
 - LHU    - Load Halfword Unsigned
-- FENCE  - Memory Ordering Fence
+- JALR   - Jump and Link Register
 - ECALL  - Environment Call
 - EBREAK - Environment Breakpoint
+- FENCE  - Memory Ordering Fence (seems a bit complex, but I added it in the cpu.rs)
 
 #### S-Type: 
 OP RS2, IMM(RS1)
@@ -206,3 +206,15 @@ OP RS1, RS2, IMM
 #### J-Type: 
 OP RD, IMM
 - JAL - Jump and Link
+
+## Syscalls
+Since syscalls are not part of ISA specification but the ABI (Application Binary Interface). Thefore we will consider the execution environment as RISCV RV32I ISA-dependent linux environment and implement the basic standard linux syscalls necessary for this emulator.
+
+The syscall number is passed in register a7 and the arguments are passed in registers a0, a1, a2, a3, a4, a5, a6. The return value is stored in register a0. The syscall is invoked by the ecall instruction. They are listed as below: 
+
+| Syscall Number | Syscall Name | Arguments      | Return Value            |
+|----------------|--------------|----------------|-------------------------|
+| 63             | read         | fd, buf, count | number of bytes read    |
+| 64             | write        | fd, buf, count | number of bytes written |
+| 93             | exit         | status         | -                       |
+| 94             | exit_group   | status         | -                       |
