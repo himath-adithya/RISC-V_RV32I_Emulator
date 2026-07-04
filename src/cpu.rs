@@ -1,20 +1,21 @@
 use crate::{
-  consts::{INST_SIZE, REG_SIZE},
+  consts::{INST_SIZE, GPR_COUNT},
   instruction::Instruction,
   instruction_format::InstructionFormat,
-  memory::Memory,
+  bus::Bus,
+  kernel::Kernel,
 };
 
 pub struct CPU {
-  pc: usize, // holds the relative address of the next instruction
+  pc: u32, // holds the relative address of the next instruction
   ir: u32, // holds the current fetched instruction
-  gpr: [u32; REG_SIZE], // holds general register values
+  gpr: [u32; GPR_COUNT], // holds general register values
   is_running: bool,
 }
 
 impl CPU {
 
-  pub fn fetch(&mut self, mem: &Memory) {
+  pub fn fetch(&mut self, mem: &Bus) {
     let pc   = self.pc();
     let inst = mem.read_inst(pc as u32);
     self.set_ir(inst); // store the instruction in IR (Instruction Register)
@@ -29,8 +30,8 @@ impl CPU {
   }
 
   // NOTE: implement sign extension in immediates
-  pub fn execute(&mut self, inst: &Instruction, mem: &mut Memory) {
-    (*inst).execute(mem, self);
+  pub fn execute(&mut self, inst: &Instruction, mem: &mut Bus, kernel: &mut Kernel) {
+    (*inst).execute(mem, self, kernel);
   }
 
   // register operations
@@ -55,16 +56,16 @@ impl CPU {
   }
 
   // get, set, and increment pc values
-  pub fn pc(&self) -> usize {
+  pub fn pc(&self) -> u32 {
     self.pc
   }
 
-  // fn set_pc(&mut self, pc: usize) {
-  //   self.pc = pc;
-  // }
+  pub fn set_pc(&mut self, pc: u32) {
+    self.pc = pc;
+  }
 
   fn inc_pc(&mut self) {
-    self.pc += INST_SIZE;
+    self.pc += INST_SIZE as u32;
   }
 
   fn get_ir(&self) -> u32 {
@@ -79,7 +80,7 @@ impl CPU {
   pub fn new() -> Self {
     Self {
       pc: 0,
-      gpr: [0; REG_SIZE],
+      gpr: [0; GPR_COUNT],
       is_running: false,
       ir: 0,
     }

@@ -10,9 +10,9 @@ mod cpu;
 mod instruction;
 mod instruction_format;
 mod kernel;
-mod memory;
+mod bus;
 
-use crate::{cpu::CPU, kernel::Kernel, memory::Memory};
+use crate::{cpu::CPU, kernel::Kernel, bus::Bus};
 use std::env::args;
 
 fn main() {
@@ -21,18 +21,18 @@ fn main() {
     args().nth(0).unwrap_or("<program_name>".into())
   ));
   // initialization and loading program into memory (in a real system kernel also sets the pc)
-  let kernel = Kernel::new();
+  let mut kernel = Kernel::new();
   let mut cpu = CPU::new();
-  let mut mem = Memory {
-    bytes: kernel.load_memory(&arg),
+  let mut mem = Bus {
+    memory: kernel.load_memory(&arg),
   };
   cpu.set_running(true);
   while cpu.is_running() {
     cpu.fetch(&mem);
     let instruction = cpu.decode();
-    cpu.execute(&instruction, &mut mem);
+    cpu.execute(&instruction, &mut mem, &mut kernel);
     // cpu.mem()
     // cpu.writeback()
-    // cpu.interrupt_handle(&kernel: Kernel)
+    // cpu.interrupt_handle(&kernel: Kernel) // for checking interrupts and hand over to the kernel
   }
 }
