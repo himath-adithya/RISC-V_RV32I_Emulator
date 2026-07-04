@@ -5,4 +5,4 @@ description = "A basic RISC-V (RV321) emulator project."
 license = "MIT"
 edition = "2021"
 
-[dependencies]
+# [dependencies]
