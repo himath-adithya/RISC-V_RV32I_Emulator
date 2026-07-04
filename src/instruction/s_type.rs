@@ -1,7 +1,7 @@
 use crate::{
   cpu::CPU,
   instruction::{Instruction},
-  memory::Memory,
+  bus::Bus,
   instruction_format::InstructionFormat,
 };
 
@@ -26,8 +26,21 @@ impl Instruction {
     Instruction::S { op, rs1, rs2, imm }
   }
 
-  pub(crate) fn execute_s(op: OpcodeS, rs1: u8, rs2: u8, imm: u16, cpu: &CPU, mem: &mut Memory) {
-    todo!()
+  pub(crate) fn execute_s(op: OpcodeS, rs1: u8, rs2: u8, imm: u16, cpu: &CPU, mem: &mut Bus) {
+    let rs1_val = cpu.read_reg(rs1);
+    let rs2_val = cpu.read_reg(rs2);
+    match op {
+      OpcodeS::SB => {
+        mem.write_byte(rs1_val.wrapping_add(imm as u32), rs2_val as u8);
+      },
+      OpcodeS::SH => {
+        mem.write_halfword(rs1_val.wrapping_add(imm as u32), rs2_val as u16);
+      },
+      OpcodeS::SW => {
+        mem.write_word(rs1_val.wrapping_add(imm as u32), rs2_val as u32);
+      },
+    }
+    todo!();
   }
 
 }

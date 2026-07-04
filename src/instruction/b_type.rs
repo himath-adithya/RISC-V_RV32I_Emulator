@@ -29,6 +29,16 @@ impl Instruction {
   }
 
   pub(crate) fn execute_b(op: OpcodeB, rs1: u8, rs2: u8, imm: u16, cpu: &mut CPU) {
+    let rs1_val = cpu.read_reg(rs1);
+    let rs2_val = cpu.read_reg(rs2);
+    match op {
+      OpcodeB::BEQ  => {},
+      OpcodeB::BNE  => {},
+      OpcodeB::BLT  => {},
+      OpcodeB::BGE  => {},
+      OpcodeB::BLTU => {},
+      OpcodeB::BGEU => {},
+    }
     todo!()
   }
 

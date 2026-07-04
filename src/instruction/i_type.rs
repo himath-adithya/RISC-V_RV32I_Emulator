@@ -1,8 +1,9 @@
 use crate::{
   cpu::CPU,
   instruction::{Instruction},
-  memory::Memory,
+  bus::Bus,
   instruction_format::InstructionFormat,
+  kernel::Kernel,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -52,27 +53,37 @@ impl Instruction {
     Instruction::I { op, rd, rs1, imm }
   }
 
-  pub(crate) fn execute_i(op: OpcodeI, rd: u8, rs1: u8, imm: u16, cpu: &mut CPU, mem: &Memory) {
+  pub(crate) fn execute_i(op: OpcodeI, rd: u8, rs1: u8, imm: u16, cpu: &mut CPU, mem: &Bus, kernel: &mut Kernel) {
     let rs1_val = cpu.read_reg(rs1);
     let result = match op {
-      OpcodeI::ADDI => rs1_val + imm as u32,
-      OpcodeI::XORI => rs1_val ^ imm as u32,
-      OpcodeI::ORI => rs1_val | imm as u32,
-      OpcodeI::ANDI => rs1_val & imm as u32,
-      OpcodeI::SLLI => rs1_val << imm as u32,
-      OpcodeI::SRLI => rs1_val >> imm as u32,
-      OpcodeI::SRAI => rs1_val >> imm as u32,
-      OpcodeI::SLTI => if rs1_val < imm as u32 { 1 } else { 0 },
-      OpcodeI::SLTIU => if rs1_val < imm as u32 { 1 } else { 0 },
-      // OpcodeI::LB => ,
-      // OpcodeI::LH => ,
-      // OpcodeI::LW => ,
-      // OpcodeI::LBU => , // zero-extend
-      // OpcodeI::LHU => , // zero-extend
-      // OpcodeI::JLAR => ,
-      // OpcodeI::ECALL => ,
-      // OpcodeI::EBREAK => ,
-      _ => panic!("Not register-immediate instruction!"),
+      OpcodeI::ADDI   => rs1_val.wrapping_add(imm as u32),
+      OpcodeI::XORI   => rs1_val ^ imm as u32,
+      OpcodeI::ORI    => rs1_val | imm as u32,
+      OpcodeI::ANDI   => rs1_val & imm as u32,
+      OpcodeI::SLLI   => rs1_val << (imm & 0x1f),
+      OpcodeI::SRLI   => rs1_val >> (imm & 0x1f),
+      OpcodeI::SRAI   => (rs1_val as i32 >> (imm & 0x1f)) as u32,
+      OpcodeI::SLTI   => ((rs1_val as i32) < (imm as i16 as i32)) as u32,
+      OpcodeI::SLTIU  => (rs1_val < (imm as u32)) as u32,
+      OpcodeI::LB     => mem.read_byte(rs1_val.wrapping_add(imm as u32)) as i8 as u32, // sign-extend
+      OpcodeI::LH     => mem.read_halfword(rs1_val.wrapping_add(imm as u32)) as i16 as u32, // sign-extend
+      OpcodeI::LW     => mem.read_word(rs1_val.wrapping_add(imm as u32)),
+      OpcodeI::LBU    => mem.read_byte(rs1_val.wrapping_add(imm as u32)) as u32, // zero-extend
+      OpcodeI::LHU    => mem.read_halfword(rs1_val.wrapping_add(imm as u32)) as u32, // zero-extend
+      OpcodeI::JALR   => {
+        let pc = cpu.pc() + 4;
+        cpu.set_pc(rs1_val + imm as u32);
+        pc
+      },
+      OpcodeI::ECALL  => {
+        // transfer control to OS, but here we handle it using the kernel object
+        kernel.handle_ecall(cpu);
+        return;
+      },
+      OpcodeI::EBREAK => {
+        // transfer control to debugger, but here we handle it using the kernel object
+        return;
+      },
     };
     cpu.write_reg(rd, result);
   }

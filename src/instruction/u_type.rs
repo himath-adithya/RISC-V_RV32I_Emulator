@@ -25,6 +25,10 @@ impl Instruction {
   }
 
   pub(crate) fn execute_u(op: OpcodeU, rd: u8, imm: u32, cpu: &mut CPU) {
+    match op {
+      OpcodeU::LUI => {},
+      OpcodeU::AUIPC => {},
+    }
     todo!()
   }
 }

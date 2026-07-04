@@ -19,6 +19,9 @@ impl Instruction {
   }
 
   pub(crate) fn execute_j(op: OpcodeJ, rd: u8, imm: u32, cpu: &mut CPU) {
+    match op {
+      OpcodeJ::JAL => {},
+    }
     todo!()
   }
 
