@@ -159,8 +159,8 @@ OP RD, RS1, RS2
 - SLL	 - Shift Left Logical
 - SRL  - Shift Right Logical	
 - SRA	 - Shift Right Arithmetic
-- SLT	 - Set Less Than (signed)
-- SLTU - Set Less Than (unsigned)
+- SLT	 - Set Less Than
+- SLTU - Set Less Than (Unsigned)
 
 #### I-Type: 
 OP RD, RS1, IMM
@@ -171,13 +171,13 @@ OP RD, RS1, IMM
 - SLLI   - Shift Left Logical Immediate
 - SRLI   - Shift Right Logical Immediate
 - SRAI   - Shift Right Arithmetic Immediate
-- SLTI   - Set Less Than Immediate (signed)	
-- SLTIU  - Set Less Than Immediate (unsigned)
+- SLTI   - Set Less Than Immediate
+- SLTIU  - Set Less Than Immediate (Unsigned)
 - LB     - Load Byte
 - LH     - Load Halfword
 - LW     - Load Word
-- LBU    - Load Byte Unsigned
-- LHU    - Load Halfword Unsigned
+- LBU    - Load Byte (Unsigned)
+- LHU    - Load Halfword (Unsigned)
 - JALR   - Jump and Link Register
 - ECALL  - Environment Call
 - EBREAK - Environment Breakpoint
@@ -218,3 +218,6 @@ The syscall number is passed in register a7 and the arguments are passed in regi
 | 64             | write        | fd, buf, count | number of bytes written |
 | 93             | exit         | status         | -                       |
 | 94             | exit_group   | status         | -                       |
+
+## References
+https://notes.cs61c.org - Single Cycle Datapath
